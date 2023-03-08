@@ -4,6 +4,9 @@ redoButton = document.getElementById("redoButton");
 saveButton = document.getElementById("saveButton");
 loadButton = document.getElementById("loadButton");
 exportButton = document.getElementById("exportButton");
+addTextButton = document.getElementById("addTextButton");
+addImageButton = document.getElementById("addImageButton");
+addShapeButton = document.getElementById("addShapeButton");
 
 // initialize the canvas and elements
 function init() {
@@ -14,6 +17,8 @@ function init() {
   // add a new text element to the canvas
   function addTextElement() {
     // TODO: implement function
+    canvas.appendChild
+    console.log("Text button clicked");
   }
   
   // add a new image element to the canvas
@@ -70,3 +75,5 @@ function init() {
   window.addEventListener("load", function() {
     init();
   });
+
+  addTextButton.addEventListener("click", addTextElement);
