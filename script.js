@@ -10,10 +10,10 @@ addShapeButton = document.getElementById("addShapeButton");
 
 var canvasLeft = canvas.offsetLeft;
 var canvasTop = canvas.offsetTop;
-var canvasWidth = canvas.offsetWidth;
-var canvasHeight = canvas.offsetHeight;
-var canvasRight = canvasLeft + canvasWidth;
-var canvasBottom = canvasTop + canvasHeight;
+var canvasWidth = canvas.clientWidth;
+var canvasHeight = canvas.clientHeight;
+var canvasRight = (canvasLeft + canvasWidth) - 410;
+var canvasBottom = (canvasTop + canvasHeight) - 100;
 
 
 // initialize the canvas and elements
@@ -337,7 +337,12 @@ canvas.addEventListener("mousedown", function(event) {
       var newY = origY + event.clientY - startY;
 
       // TODO: Restrict elements from moving outside of the canvas bounds
-      
+      if (newX > canvas.width) {
+        newX = canvas.width;
+      }
+      if (newY > canvas.height) {
+        newY = canvas.height;
+      }
 
       // update the position of the element
       clickedElement.style.left = newX + "px";
