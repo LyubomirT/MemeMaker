@@ -8,6 +8,14 @@ addTextButton = document.getElementById("addTextButton");
 addImageButton = document.getElementById("addImageButton");
 addShapeButton = document.getElementById("addShapeButton");
 
+var canvasLeft = canvas.offsetLeft;
+var canvasTop = canvas.offsetTop;
+var canvasWidth = canvas.offsetWidth;
+var canvasHeight = canvas.offsetHeight;
+var canvasRight = canvasLeft + canvasWidth;
+var canvasBottom = canvasTop + canvasHeight;
+
+
 // initialize the canvas and elements
 function init() {
     canvas = document.getElementById("canvas");
@@ -75,6 +83,20 @@ function addTextElement() {
         var newX = origX + event.clientX - startX;
         var newY = origY + event.clientY - startY;
 
+        // TODO: Restrict elements from moving outside of canvas
+        if (newX < 0) {
+          newX = 0;
+        }
+        if (newX > canvasRight) {
+          newX = canvasRight;
+        }
+        if (newY < 0) {
+          newY = 0;
+        }
+        if (newY > canvasBottom) {
+          newY = canvasBottom;
+        }
+
         // update the position of the element
         clickedElement.style.left = newX + "px";
         clickedElement.style.top = newY + "px";
@@ -136,6 +158,7 @@ function addImageElement() {
 
       // add drag and drop event listeners to the element
       imageElement.addEventListener("dragstart", function(event) {
+        event.preventDefault();
         event.dataTransfer.setData("text/plain", null);
         event.dataTransfer.setDragImage(this, 0, 0);
         this.classList.add("dragging");
@@ -167,6 +190,20 @@ function addImageElement() {
             // calculate the new position of the element
             var newX = origX + event.clientX - startX;
             var newY = origY + event.clientY - startY;
+
+            // TODO: Restrict elements from moving outside of canvas
+            if (newX < 0) {
+              newX = 0;
+            }
+            if (newX > canvasRight) { // edit this line
+              newX = canvasRight - clickedElement.offsetWidth; // add this line
+            }
+            if (newY < 0) {
+              newY = 0;
+            }
+            if (newY > canvasBottom) { // edit this line
+              newY = canvasBottom - clickedElement.offsetHeight; // add this line
+            }
 
             // update the position of the element
             clickedElement.style.left = newX + "px";
@@ -279,7 +316,12 @@ canvas.addEventListener("mousedown", function(event) {
     }
   }
   if (clickedElement) {
-    // select the element
+    var selectedElement = document.querySelector(".selected");
+    if (selectedElement && selectedElement !== clickedElement) {
+      // deselect the currently selected element
+      DeselectElement(selectedElement);
+    }
+    // select the clicked element
     SelectElement(clickedElement);
 
     // start dragging the element
@@ -293,6 +335,9 @@ canvas.addEventListener("mousedown", function(event) {
       // calculate the new position of the element
       var newX = origX + event.clientX - startX;
       var newY = origY + event.clientY - startY;
+
+      // TODO: Restrict elements from moving outside of the canvas bounds
+      
 
       // update the position of the element
       clickedElement.style.left = newX + "px";
@@ -313,3 +358,4 @@ canvas.addEventListener("mousedown", function(event) {
     DeselectElement(document.querySelector(".selected"));
   }
 });
+
