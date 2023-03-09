@@ -33,8 +33,10 @@ function addTextElement() {
   textElement.style.position = "absolute";
   textElement.style.left = "100px";
   textElement.style.top = "100px";
-  textElement.style.width = "200px";
-  textElement.style.height = "100px";
+  textElement.style.minWidth = "80px";
+  textElement.style.minHeight = "30px";
+  textElement.style.width = "auto";
+  textElement.style.height = "auto";
 
   // add the element to the canvas and the elements array
   canvas.appendChild(textElement);
@@ -204,19 +206,39 @@ function addImageElement() {
   fileInput.click();
 }
 
-// select an element on the canvas
-function selectElement(element) {
+// show the menu for the selected element
+function showMenu() {
   // TODO: implement function
 }
 
-// deselect the currently selected element
-function deselectElement() {
+// hide the menu for the selected element
+function hideMenu() {
   // TODO: implement function
 }
 
-// move the selected element by a given amount
-function moveSelectedElement(dx, dy) {
-  // TODO: implement function
+// add a "selected" state to the element and show the menu
+function SelectElement(element) {
+  // remove the "selected" state from all elements
+  elements.forEach(function(el) {
+    el.classList.remove("selected");
+  });
+  
+  // add the "selected" state to the clicked element
+  element.classList.add("selected");
+  element.style.borderColor = "#7096e6";
+  
+  // show the menu
+  showMenu();
+}
+
+// remove the "selected" state from the element and hide the menu
+function DeselectElement(element) {
+  // remove the "selected" state from the element
+  element.classList.remove("selected");
+  element.style.borderColor = "#dfdfdf";
+  
+  // hide the menu
+  hideMenu();
 }
 
 // rotate the selected element by a given angle
@@ -230,17 +252,7 @@ function resizeSelectedElement(dw, dh) {
 }
 
 // crop the selected image element to a given size
-function cropSelectedElement(x, y, w, h) {
-  // TODO: implement function
-}
-
-// show the menu for the selected element
-function showMenu() {
-  // TODO: implement function
-}
-
-// hide the menu for the selected element
-function hideMenu() {
+function cropSelectedImage(x, y, w, h) {
   // TODO: implement function
 }
 
@@ -256,3 +268,48 @@ window.addEventListener("load", function() {
 
 addTextButton.addEventListener("click", addTextElement);
 addImageButton.addEventListener("click", addImageElement);
+
+canvas.addEventListener("mousedown", function(event) {
+  // find the element that was clicked on
+  var clickedElement = null;
+  for (var i = 0; i < elements.length; i++) {
+    if (elements[i].contains(event.target)) {
+      clickedElement = elements[i];
+      break;
+    }
+  }
+  if (clickedElement) {
+    // select the element
+    SelectElement(clickedElement);
+
+    // start dragging the element
+    clickedElement.classList.add("dragging");
+    var startX = event.clientX;
+    var startY = event.clientY;
+    var origX = parseInt(clickedElement.style.left);
+    var origY = parseInt(clickedElement.style.top);
+
+    function mousemove(event) {
+      // calculate the new position of the element
+      var newX = origX + event.clientX - startX;
+      var newY = origY + event.clientY - startY;
+
+      // update the position of the element
+      clickedElement.style.left = newX + "px";
+      clickedElement.style.top = newY + "px";
+    }
+
+    function mouseup(event) {
+      // stop dragging the element
+      clickedElement.classList.remove("dragging");
+      canvas.removeEventListener("mousemove", mousemove);
+      canvas.removeEventListener("mouseup", mouseup);
+    }
+
+    canvas.addEventListener("mousemove", mousemove);
+    canvas.addEventListener("mouseup", mouseup);
+  } else {
+    // deselect the current element if the user clicked outside of it
+    DeselectElement(document.querySelector(".selected"));
+  }
+});
